@@ -1,12 +1,79 @@
 body {
-  font-family: Arial, sans-serif;
-  margin: 20px;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #15202b; /* Twitter dark background */
+  color: #ffffff; /* White text for contrast */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  overflow: hidden;
 }
+
+h1, h2 {
+  color: #1da1f2; /* Twitter blue */
+}
+
 input[type="range"] {
+  -webkit-appearance: none;
   width: 300px;
+  height: 6px;
+  background: #657786; /* Twitter gray */
+  outline: none;
+  border-radius: 5px;
   margin: 10px;
+  transition: background 0.3s;
 }
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  background: #1da1f2; /* Twitter blue */
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  background: #1da1f2; /* Twitter blue */
+  border-radius: 50%;
+  cursor: pointer;
+}
+
 button {
+  background-color: #1da1f2; /* Twitter blue */
+  color: #ffffff;
+  border: none;
+  padding: 12px 20px;
+  font-size: 16px;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #0d8de1; /* Slightly darker blue on hover */
+}
+
+select {
+  background-color: #192734; /* Twitter dark mode dropdown background */
+  color: #ffffff;
+  border: 1px solid #657786; /* Twitter gray */
   padding: 10px;
   font-size: 16px;
+  border-radius: 5px;
+  outline: none;
+  margin: 10px 0;
+}
+
+#sliderValue {
+  font-size: 20px;
+  font-weight: bold;
+  color: #1da1f2; /* Twitter blue */
+  margin-top: 10px;
 }
