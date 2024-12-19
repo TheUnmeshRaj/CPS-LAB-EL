@@ -19,6 +19,10 @@ def calculate_angle(y_tip, y_wrist):
 
 cap = cv2.VideoCapture(0)
 
+# Tracking the min/max values to map to 0-100
+min_angle = float('inf')
+max_angle = float('-inf')
+
 while cap.isOpened():
     success, frame = cap.read()
     if not success:
@@ -39,8 +43,16 @@ while cap.isOpened():
 
             angle = calculate_angle(index_tip_y, wrist_y)
 
+            # Track min/max angle
+            min_angle = min(min_angle, angle)
+            max_angle = max(max_angle, angle)
+
             # Map the angle to a slider value (0 to 100)
-            slider_value = np.interp(angle, [-0.5, 0.5], [0, 100])
+            if max_angle != min_angle:
+                slider_value = np.interp(angle, [min_angle, max_angle], [0, 100])
+            else:
+                slider_value = 0  # If the min and max are equal, set it to 0 (or some default)
+
             slider_value = int(np.clip(slider_value, 0, 100))
 
             print("Slider Value:", slider_value)
