@@ -34,26 +34,22 @@ while cap.isOpened():
                 frame, hand_landmarks, mp_hands.HAND_CONNECTIONS
             )
 
-            
             wrist_y = hand_landmarks.landmark[0].y
             index_tip_y = hand_landmarks.landmark[8].y
 
-            
             angle = calculate_angle(index_tip_y, wrist_y)
 
-            
+            # Map the angle to a slider value (0 to 100)
             slider_value = np.interp(angle, [-0.5, 0.5], [0, 100])
             slider_value = int(np.clip(slider_value, 0, 100))
 
             print("Slider Value:", slider_value)
 
-            
             try:
                 requests.post(FLASK_URL, json={"value": slider_value})
             except requests.exceptions.RequestException as e:
                 print("Error:", e)
 
-    
     cv2.imshow('Hand Tracking', frame)
 
     if cv2.waitKey(5) & 0xFF == ord('q'):
