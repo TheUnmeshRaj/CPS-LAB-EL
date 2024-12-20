@@ -2,8 +2,6 @@ import cv2
 import mediapipe as mp
 import numpy as np
 import requests
-from gpiozero import AngularServo
-from time import sleep
 
 mp_hands = mp.solutions.hands
 hands = mp_hands.Hands(
@@ -14,9 +12,6 @@ hands = mp_hands.Hands(
 mp_drawing = mp.solutions.drawing_utils
 
 FLASK_URL = "http://127.0.0.1:5000/update_slider"
-
-# Initialize AngularServo
-servo = AngularServo(17, min_angle=-90, max_angle=90)  # Pin 17 is used as an example
 
 def calculate_angle(y_tip, y_wrist):
     """Return angle of hand based on fingertips (vertical vs horizontal)."""
@@ -61,10 +56,6 @@ while cap.isOpened():
             slider_value = int(np.clip(slider_value, 0, 100))
 
             print("Slider Value:", slider_value)
-
-            # Map slider_value (0 to 100) to servo angle (-90 to +90)
-            servo_angle = np.interp(slider_value, [0, 100], [-90, 90])
-            servo.angle = servo_angle
 
             try:
                 requests.post(FLASK_URL, json={"value": slider_value})
