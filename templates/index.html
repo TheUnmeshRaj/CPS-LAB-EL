@@ -3,139 +3,130 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <style>
-          body {
-            font-family: 'Helvetica Neue', Arial, sans-serif;
+    <title>Gesture Control</title>
+    <style>
+        /* Global Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #121212;
+            color: #e0e0e0;
             margin: 0;
             padding: 0;
-            background-color: #15202b; /* Twitter dark background */
-            color: #ffffff; /* White text for contrast */
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             height: 100vh;
             overflow: hidden;
-          }
-      
-          h1, h2 {
-            color: #1da1f2; /* Twitter blue */
-          }
-      
-          input[type="range"] {
-            -webkit-appearance: none;
-            width: 300px;
-            height: 6px;
-            background: #657786; /* Twitter gray */
-            outline: none;
-            border-radius: 5px;
-            margin: 10px;
-            transition: background 0.3s;
-          }
-      
-          input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 16px;
-            height: 16px;
-            background: #1da1f2; /* Twitter blue */
-            border-radius: 50%;
-            cursor: pointer;
-          }
-      
-          input[type="range"]::-moz-range-thumb {
-            width: 16px;
-            height: 16px;
-            background: #1da1f2; /* Twitter blue */
-            border-radius: 50%;
-            cursor: pointer;
-          }
-      
-          button {
-            background-color: #1da1f2; /* Twitter blue */
-            color: #ffffff;
-            border: none;
-            padding: 12px 20px;
-            font-size: 16px;
-            border-radius: 25px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-          }
-      
-          button:hover {
-            background-color: #0d8de1; /* Slightly darker blue on hover */
-          }
-      
-          select {
-            background-color: #192734; /* Twitter dark mode dropdown background */
-            color: #ffffff;
-            border: 1px solid #657786; /* Twitter gray */
-            padding: 10px;
-            font-size: 16px;
-            border-radius: 5px;
-            outline: none;
-            margin: 10px 0;
-          }
-      
-          #sliderValue {
-            font-size: 20px;
-            font-weight: bold;
-            color: #1da1f2; /* Twitter blue */
-            margin-top: 10px;
-          }
-        </style>
-    <title>Slider Control</title>
-</head>
-<body>
-    <h1>Slider Interface</h1>
-
-    <label for="mode">Choose Mode:</label>
-    <select id="mode" onchange="switchMode()">
-        <option value="audio">Audio-Controlled</option>
-        <option value="visual">Visual-Controlled</option>
-    </select>
-
-    <div id="audioMode" style="display: none;">
-        <h2>Audio Control</h2>
-        <p>Say a value between 0 and 100 to control the slider.</p>
-    </div>
-
-    <div id="visualMode" style="display: none;">
-        <h2>Visual Control</h2>
-        <p>Move your hand to control the slider visually.</p>
-    </div>
-
-    <h3>Slider Value</h3>
-    <input type="range" id="slider" min="0" max="100" value="0" disabled>
-    <span id="sliderValue">0</span>
-
-    <script>
-        const slider = document.getElementById("slider");
-        const sliderValue = document.getElementById("sliderValue");
-        const audioMode = document.getElementById("audioMode");
-        const visualMode = document.getElementById("visualMode");
-
-        function switchMode() {
-            const mode = document.getElementById("mode").value;
-            if (mode === "audio") {
-                audioMode.style.display = "block";
-                visualMode.style.display = "none";
-            } else {
-                audioMode.style.display = "none";
-                visualMode.style.display = "block";
-            }
         }
 
-        // Poll slider value
-        setInterval(() => {
-            fetch('/get_slider')
+        h1 {
+            margin-bottom: 20px;
+            font-size: 36px;
+            color: #ffffff;
+        }
+
+        p {
+            font-size: 18px;
+            color: #cccccc;
+            margin: 10px 0;
+        }
+
+        #current-mode {
+            font-weight: bold;
+        }
+
+        /* Button Styles */
+        button {
+            padding: 12px 24px;
+            margin: 10px;
+            cursor: pointer;
+            font-size: 18px;
+            background-color: #6200ea;
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #3700b3;
+        }
+
+        button:active {
+            background-color: #6200ea;
+            transform: translateY(2px);
+        }
+
+        /* Slider Styles */
+        #slider-container {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        #slider {
+            width: 500px; /* Increased width for a longer slider */
+            height: 8px;
+            background: #333;
+            border-radius: 5px;
+            appearance: none;
+            outline: none;
+            transition: background 0.2s ease;
+        }
+        
+
+        #slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #6200ea;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        #slider::-webkit-slider-thumb:hover {
+            background: #3700b3;
+        }
+
+        #slider-value {
+            font-size: 22px;
+            font-weight: bold;
+            color: #ffffff;
+            margin-top: 10px;
+        }
+
+        /* Media Queries */
+        @media (max-width: 768px) {
+            #slider {
+                width: 100%;
+            }
+
+            button {
+                width: 100%;
+                font-size: 16px;
+            }
+        }
+    </style>
+    <script>
+        function startProcess() {
+            fetch('/start')
                 .then(response => response.json())
                 .then(data => {
-                    slider.value = data.slider;
-                    sliderValue.textContent = data.slider;
-                })
-                .catch(error => console.error('Error fetching slider value:', error));
-        }, 100);
+                    if (data.status === "started") {
+                        alert(`Started in Gesture Mode.`);
+                    }
+                });
+        }
     </script>
+</head>
+<body>
+    <h1>Gesture Control</h1>
+    <p id="current-mode">Current Mode: Gesture</p>
+    <div id="slider-container">
+        <input type="range" id="slider" min="0" max="100" value="50">
+        <p>Slider Value: <span id="slider-value">50</span></p>
+    </div>
+    <button onclick="startProcess()">Start</button>
 </body>
 </html>
